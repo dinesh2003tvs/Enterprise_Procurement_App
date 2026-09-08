@@ -15,7 +15,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: DATABASE_URL
-        sync: false
+        value: postgresql://neondb_owner:npg_4MDzu0iQmegq@ep-little-dew-ae953rdn-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
       - key: FRONTEND_URL
         sync: false
 

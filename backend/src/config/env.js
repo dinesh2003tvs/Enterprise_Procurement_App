@@ -7,6 +7,6 @@ module.exports = {
   JWT_SECRET: process.env.JWT_SECRET || 'dev_secret_procurement_platform_jwt_key_2026',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
   FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:5173',
-  DATABASE_URL: process.env.DATABASE_URL || ''
+  DATABASE_URL: process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_4MDzu0iQmegq@ep-little-dew-ae953rdn-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
 };
 

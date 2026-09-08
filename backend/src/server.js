@@ -86,6 +86,9 @@ app.use(errorHandler);
 
 // Start server if run directly
 if (require.main === module) {
+  const { ensureSeedData } = require('./config/prisma');
+  ensureSeedData().catch(err => console.warn('Prisma seed check warning:', err.message));
+
   app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(`Enterprise Procurement API Server running on port ${PORT}`);
