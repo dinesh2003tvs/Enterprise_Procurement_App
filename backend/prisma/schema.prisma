@@ -1,0 +1,141 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+  FINANCE
+  PROCUREMENT_ADMIN
+  SENIOR_MANAGER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum Category {
+  IT_EQUIPMENT
+  SOFTWARE
+  OFFICE_SUPPLIES
+  TRAVEL
+  TRAINING
+  OTHER
+}
+
+enum RequestStatus {
+  DRAFT
+  SUBMITTED
+  MANAGER_APPROVED
+  SENIOR_MANAGER_APPROVED
+  FINANCE_APPROVED
+  PROCUREMENT_STARTED
+  PAYMENT_PENDING
+  COMPLETED
+  REJECTED
+  CANCELLED
+  PAYMENT_FAILED
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         Role
+  department   String
+  createdAt    DateTime  @default(now())
+
+  requests     PurchaseRequest[]
+  approvals    Approval[]
+}
+
+model PurchaseRequest {
+  id                    String         @id
+  employeeId            String
+  employee              User           @relation(fields: [employeeId], references: [id])
+  department            String
+  itemName              String
+  category              Category
+  quantity              Int
+  unitPrice             Float
+  totalAmount           Float
+  businessJustification String
+  priority              Priority
+  status                RequestStatus  @default(DRAFT)
+  selectedVendorId      String?
+  vendor                Vendor?        @relation(fields: [selectedVendorId], references: [id])
+  paymentId             String?        @unique
+  payment               Payment?       @relation(fields: [paymentId], references: [id])
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  approvals             Approval[]
+  notifications         Notification[]
+  auditLogs             AuditLog[]
+}
+
+model Approval {
+  id         String          @id @default(uuid())
+  requestId  String
+  request    PurchaseRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  approverId String
+  approver   User            @relation(fields: [approverId], references: [id])
+  role       Role
+  action     String          // APPROVED or REJECTED
+  comment    String?
+  createdAt  DateTime        @default(now())
+}
+
+model Vendor {
+  id                  String            @id @default(uuid())
+  name                String
+  code                String            @unique // TECHSOURCE, OFFICEMART, ENTERPRISESUPPLY
+  apiConfig           String?           // JSON configuration string
+  isActive            Boolean           @default(true)
+  supportedCategories String            // Comma separated categories
+
+  requests            PurchaseRequest[]
+}
+
+model Payment {
+  id             String           @id @default(uuid())
+  requestId      String           @unique
+  request        PurchaseRequest?
+  method         String           // BANK_TRANSFER, CORPORATE_CARD, DIGITAL_PAYMENT
+  transactionId  String           @unique
+  idempotencyKey String           @unique
+  status         String           // SUCCESS, FAILED
+  amount         Float
+  createdAt      DateTime         @default(now())
+}
+
+model Notification {
+  id        String          @id @default(uuid())
+  requestId String
+  request   PurchaseRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  event     String          // e.g. REQUEST_SUBMITTED, MANAGER_APPROVED
+  channel   String          // EMAIL, SMS, WHATSAPP
+  recipient String
+  status    String          // PENDING, SENT, FAILED
+  message   String
+  createdAt DateTime        @default(now())
+}
+
+model AuditLog {
+  id          String          @id @default(uuid())
+  requestId   String
+  request     PurchaseRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  action      String          // e.g. REQUEST_CREATED, MANAGER_APPROVED
+  performedBy String          // user email
+  comment     String?
+  timestamp   DateTime        @default(now())
+}
