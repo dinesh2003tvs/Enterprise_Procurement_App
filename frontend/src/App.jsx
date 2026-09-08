@@ -18,8 +18,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingState message="Verifying session..." />
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-100">
+        <LoadingState message="Verifying security session..." />
       </div>
     );
   }
@@ -30,21 +30,33 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (allowedRoles && !allowedRoles.includes(role)) {
     return (
-      <div className="max-w-xl mx-auto my-16 p-8 bg-white rounded-2xl border border-rose-200 text-center shadow-xs">
-        <h2 className="text-xl font-bold text-rose-800">403 — Unauthorized Access</h2>
-        <p className="text-xs text-slate-500 mt-2">
-          Your current role (<strong>{role}</strong>) does not have permission to view this view.
-        </p>
-        <Navigate to="/dashboard" replace />
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4">
+        <div className="max-w-md w-full p-8 glass-panel rounded-2xl border border-rose-500/20 text-center shadow-2xl relative overflow-hidden">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mb-4 shadow-inner">
+            <span className="text-2xl font-bold">403</span>
+          </div>
+          <h2 className="text-xl font-bold text-white">Unauthorized Access</h2>
+          <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+            Your current role (<span className="text-rose-300 font-semibold">{role}</span>) does not have permission to view this pipeline.
+          </p>
+          <div className="mt-6">
+            <Navigate to="/dashboard" replace />
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-brand-500/30 selection:text-brand-200">
+      {/* Ambient background glows */}
+      <div className="fixed inset-0 bg-grid-pattern opacity-60 pointer-events-none -z-10" />
+      <div className="fixed top-0 left-1/4 w-96 h-96 ambient-glow-1 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="fixed bottom-0 right-1/4 w-96 h-96 ambient-glow-2 rounded-full blur-3xl pointer-events-none -z-10" />
+
       <Navbar />
-      <main className="min-h-[calc(100vh-64px)] pb-12">{children}</main>
-    </>
+      <main className="min-h-[calc(100vh-64px)] pb-16">{children}</main>
+    </div>
   );
 };
 

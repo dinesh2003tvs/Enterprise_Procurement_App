@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { StatusBadge } from '../components/StatusBadge';
 import { LoadingState, EmptyState, ErrorState } from '../components/UIStateView';
-import { CheckSquare, Check, X, MessageSquare, ChevronRight } from 'lucide-react';
+import { CheckSquare, Check, X, MessageSquare, ChevronRight, UserCheck, ShieldAlert } from 'lucide-react';
 
 export const ManagerQueue = () => {
   const [requests, setRequests] = useState([]);
@@ -36,7 +36,7 @@ export const ManagerQueue = () => {
   const openModal = (req, action) => {
     setSelectedReq(req);
     setModalAction(action);
-    setComment(action === 'APPROVE' ? 'Approved by departmental manager' : '');
+    setComment(action === 'APPROVE' ? 'Approved by departmental manager for operational use' : '');
   };
 
   const handleDecision = async () => {
@@ -61,81 +61,92 @@ export const ManagerQueue = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Header */}
-      <div className="mb-6 pb-4 border-b border-slate-200 flex items-center justify-between">
+      <div className="mb-8 pb-6 border-b border-slate-800/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center">
-              <CheckSquare className="w-4 h-4" />
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center">
+              <CheckSquare className="w-5 h-5" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">Manager Approval Queue</h1>
+            <h1 className="text-2xl font-extrabold text-white tracking-tight">Manager Approval Pipeline</h1>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Review and approve departmental purchase requests before financial validation
+          <p className="text-xs text-slate-400 mt-1 pl-13">
+            Review and clear departmental purchase requisitions before automatic transmission to Finance
           </p>
         </div>
-        <span className="text-xs font-semibold px-3 py-1 bg-purple-50 text-purple-700 rounded-full border border-purple-200">
-          {requests.length} Pending
-        </span>
+        <div className="flex items-center space-x-3">
+          <span className="text-xs font-bold px-3.5 py-1.5 bg-purple-500/10 text-purple-300 rounded-xl border border-purple-500/20 shadow-glow-purple flex items-center space-x-1.5">
+            <span className="w-2 h-2 rounded-full bg-purple-400 animate-ping" />
+            <span>{requests.length} Pending Approval</span>
+          </span>
+        </div>
       </div>
 
       {loading ? (
-        <LoadingState message="Loading manager approval queue..." />
+        <LoadingState message="Loading manager approval backlog..." />
       ) : error ? (
         <ErrorState title="Queue Error" message={error} onRetry={fetchPending} />
       ) : requests.length === 0 ? (
         <EmptyState
-          title="Manager Queue Clear"
-          message="No purchase requests are currently waiting for your approval."
+          title="All Clear — No Pending Approvals"
+          message="No purchase requisitions are currently waiting for your departmental managerial clearance."
         />
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="glass-panel rounded-2xl border border-slate-800/80 shadow-2xl overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-600">
-              <thead className="bg-slate-50 text-slate-700 font-semibold uppercase tracking-wider text-[10px] border-b border-slate-200">
+            <table className="w-full text-left text-xs text-slate-300">
+              <thead className="bg-slate-950/60 text-slate-400 font-semibold uppercase tracking-wider text-[10px] border-b border-slate-800">
                 <tr>
-                  <th className="py-3 px-4">Request ID</th>
-                  <th className="py-3 px-4">Requester</th>
-                  <th className="py-3 px-4">Item & Category</th>
-                  <th className="py-3 px-4">Priority</th>
-                  <th className="py-3 px-4">Total Amount</th>
-                  <th className="py-3 px-4 text-right">Review Action</th>
+                  <th className="py-3.5 px-5">Requisition ID</th>
+                  <th className="py-3.5 px-5">Requester Profile</th>
+                  <th className="py-3.5 px-5">Requisition Item</th>
+                  <th className="py-3.5 px-5">Priority</th>
+                  <th className="py-3.5 px-5">Requisition Commitment</th>
+                  <th className="py-3.5 px-5 text-right">Review Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-800/60">
                 {requests.map((r) => (
-                  <tr key={r.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-semibold text-blue-600">
+                  <tr key={r.id} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="py-4 px-5 font-mono font-bold text-blue-400">
                       <Link to={`/requests/${r.id}`} className="hover:underline">
                         {r.id}
                       </Link>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-800">{r.employeeName}</div>
-                      <div className="text-[10px] text-slate-400">{r.department}</div>
+                    <td className="py-4 px-5">
+                      <div className="font-semibold text-white">{r.employeeName}</div>
+                      <div className="text-[11px] text-purple-300 font-medium mt-0.5">{r.department} Department</div>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-800">{r.itemName}</div>
-                      <div className="text-[10px] text-slate-400">{r.category} ({r.quantity} units)</div>
+                    <td className="py-4 px-5">
+                      <div className="font-medium text-white">{r.itemName}</div>
+                      <div className="text-[11px] text-slate-400 mt-0.5">
+                        {r.category} • {r.quantity} unit(s)
+                      </div>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <span className="font-semibold text-slate-700">{r.priority}</span>
+                    <td className="py-4 px-5">
+                      <span className={`inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                        r.priority === 'CRITICAL' ? 'bg-rose-500/10 border-rose-500/30 text-rose-300' :
+                        r.priority === 'HIGH' ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' :
+                        'bg-slate-800 border-slate-700 text-slate-400'
+                      }`}>
+                        {r.priority}
+                      </span>
                     </td>
-                    <td className="py-3.5 px-4 font-bold text-slate-900">
+                    <td className="py-4 px-5 font-bold text-white text-sm">
                       ₹{r.totalAmount.toLocaleString('en-IN')}
                     </td>
-                    <td className="py-3.5 px-4 text-right space-x-2">
+                    <td className="py-4 px-5 text-right space-x-2">
                       <button
                         onClick={() => openModal(r, 'APPROVE')}
-                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-xs transition-colors inline-flex items-center space-x-1"
+                        className="px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-600/20 transition-all inline-flex items-center space-x-1.5"
                       >
                         <Check className="w-3.5 h-3.5" />
                         <span>Approve</span>
                       </button>
                       <button
                         onClick={() => openModal(r, 'REJECT')}
-                        className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 rounded-lg font-semibold text-xs transition-colors inline-flex items-center space-x-1"
+                        className="px-3.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 rounded-xl font-bold text-xs transition-all inline-flex items-center space-x-1.5"
                       >
                         <X className="w-3.5 h-3.5" />
                         <span>Reject</span>
@@ -149,28 +160,32 @@ export const ManagerQueue = () => {
         </div>
       )}
 
-      {/* Approval / Rejection Modal */}
+      {/* Modern Approval / Rejection Modal */}
       {selectedReq && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">
-              {modalAction === 'APPROVE' ? 'Approve Purchase Request' : 'Reject Purchase Request'}
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="glass-panel rounded-3xl max-w-lg w-full p-7 shadow-2xl border border-slate-700/80 relative overflow-hidden">
+            <div className={`absolute top-0 left-0 right-0 h-1.5 ${
+              modalAction === 'APPROVE' ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-rose-500 to-amber-500'
+            }`} />
+
+            <h3 className="text-xl font-extrabold text-white mb-2">
+              {modalAction === 'APPROVE' ? 'Approve Purchase Requisition' : 'Reject Purchase Requisition'}
             </h3>
-            <p className="text-xs text-slate-500 mb-4">
-              Request <strong className="font-mono text-slate-800">{selectedReq.id}</strong> for{' '}
-              <strong className="text-slate-800">{selectedReq.itemName}</strong> (₹{selectedReq.totalAmount.toLocaleString('en-IN')})
+            <p className="text-xs text-slate-400 mb-5 leading-relaxed">
+              Requisition <strong className="font-mono text-blue-400">{selectedReq.id}</strong> for{' '}
+              <strong className="text-white">{selectedReq.itemName}</strong> (₹{selectedReq.totalAmount.toLocaleString('en-IN')})
             </p>
 
-            <div className="mb-4">
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Approval Comment / Feedback {modalAction === 'REJECT' && <span className="text-rose-500">*</span>}
+            <div className="mb-5">
+              <label className="block text-xs font-semibold text-slate-300 mb-2 uppercase tracking-wider">
+                Manager Justification / Feedback {modalAction === 'REJECT' && <span className="text-rose-400">*</span>}
               </label>
               <textarea
                 rows="3"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                placeholder={modalAction === 'APPROVE' ? 'Add any approval remarks...' : 'Provide specific rejection reason...'}
-                className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder={modalAction === 'APPROVE' ? 'Add managerial sign-off remarks...' : 'Provide specific rejection reasoning...'}
+                className="w-full px-4 py-3 bg-slate-950/80 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:ring-2 focus:ring-brand-500/50 outline-none"
               />
             </div>
 
@@ -178,7 +193,7 @@ export const ManagerQueue = () => {
               <button
                 type="button"
                 onClick={() => setSelectedReq(null)}
-                className="px-4 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                className="px-4 py-2.5 border border-slate-700 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
               >
                 Cancel
               </button>
@@ -186,13 +201,13 @@ export const ManagerQueue = () => {
                 type="button"
                 disabled={actionLoading}
                 onClick={handleDecision}
-                className={`px-4 py-2 rounded-xl text-xs font-semibold text-white shadow-xs ${
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold text-white shadow-lg transition-all ${
                   modalAction === 'APPROVE'
-                    ? 'bg-emerald-600 hover:bg-emerald-700'
-                    : 'bg-rose-600 hover:bg-rose-700'
+                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-emerald-600/30'
+                    : 'bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 shadow-rose-600/30'
                 }`}
               >
-                {actionLoading ? 'Processing...' : modalAction === 'APPROVE' ? 'Confirm Approval' : 'Confirm Rejection'}
+                {actionLoading ? 'Updating Ledger...' : modalAction === 'APPROVE' ? 'Confirm Approval' : 'Confirm Rejection'}
               </button>
             </div>
           </div>
