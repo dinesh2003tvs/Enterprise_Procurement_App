@@ -86,12 +86,12 @@ async function runAutomationTests() {
     // ----------------------------------------------------
     console.log('[Test 3] Employee Create Purchase Request (Draft)');
     const draftPayload = {
-      itemName: 'Dell XPS 15 Developer Workstation',
+      itemName: 'Dell UltraSharp 27 Monitor',
       category: 'IT_EQUIPMENT',
-      quantity: 3,
-      unitPrice: 45000,
+      quantity: 1,
+      unitPrice: 35000,
       priority: 'HIGH',
-      businessJustification: 'High-compute laptop setup for AI/ML engineering team'
+      businessJustification: 'Display monitor for engineering workstation'
     };
     const createRes = await apiRequest('/requests', {
       method: 'POST',
@@ -100,7 +100,7 @@ async function runAutomationTests() {
 
     assert.strictEqual(createRes.status, 201, 'Request creation failed');
     assert.strictEqual(createRes.data.data.status, 'DRAFT');
-    assert.strictEqual(createRes.data.data.totalAmount, 135000);
+    assert.strictEqual(createRes.data.data.totalAmount, 35000);
     const requestId = createRes.data.data.id;
     console.log(`  ✅ Draft created: ID=${requestId}, Status=DRAFT, Total=₹${createRes.data.data.totalAmount}\n`);
 
