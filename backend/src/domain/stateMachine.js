@@ -44,24 +44,21 @@ class StateMachine {
         return STATES.CANCELLED;
 
       case 'MANAGER_APPROVE':
-        if (currentStatus !== STATES.SUBMITTED) {
+        if (currentStatus !== STATES.SUBMITTED && currentStatus !== STATES.SENIOR_MANAGER_APPROVED) {
           throw new AppError('INVALID_STATE_TRANSITION', `Cannot manager-approve request in state ${currentStatus}`);
         }
         // Emergency Flow Rule: CRITICAL priority and <= 50,000 INR skips finance approval directly to procurement
         if (request.priority === 'CRITICAL' && request.totalAmount <= 50000) {
           return STATES.PROCUREMENT_STARTED;
         }
-        // High Value Rule: Amount > 100,000 INR requires senior manager approval
-        if (request.totalAmount > 100000) {
-          return STATES.SENIOR_MANAGER_APPROVED;
-        }
+        // All manager-approved requests move directly to Finance queue
         return STATES.MANAGER_APPROVED;
 
       case 'SENIOR_MANAGER_APPROVE':
-        if (currentStatus !== STATES.SENIOR_MANAGER_APPROVED) {
+        if (currentStatus !== STATES.SENIOR_MANAGER_APPROVED && currentStatus !== STATES.SUBMITTED) {
           throw new AppError('INVALID_STATE_TRANSITION', `Cannot senior-manager approve request in state ${currentStatus}`);
         }
-        return STATES.FINANCE_APPROVED;
+        return STATES.MANAGER_APPROVED;
 
       case 'MANAGER_REJECT':
       case 'SENIOR_MANAGER_REJECT':
@@ -76,7 +73,7 @@ class StateMachine {
         return STATES.REJECTED;
 
       case 'FINANCE_APPROVE':
-        if (currentStatus !== STATES.MANAGER_APPROVED) {
+        if (currentStatus !== STATES.MANAGER_APPROVED && currentStatus !== STATES.SENIOR_MANAGER_APPROVED) {
           throw new AppError('INVALID_STATE_TRANSITION', `Cannot finance-approve request in state ${currentStatus}`);
         }
         return STATES.FINANCE_APPROVED;

@@ -84,7 +84,7 @@ class ApprovalService {
   }
 
   async getPendingFinance() {
-    return requestRepository.findByStatus(STATES.MANAGER_APPROVED);
+    return requestRepository.findByStatus([STATES.MANAGER_APPROVED, STATES.SENIOR_MANAGER_APPROVED]);
   }
 
   async financeApprove(requestId, financeUser, comment = 'Budget verified and approved') {
