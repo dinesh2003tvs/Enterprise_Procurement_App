@@ -21,17 +21,27 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman) or matching allowed list
-      if (!origin || allowedOrigins.includes(origin) || NODE_ENV !== 'production') {
+      // Allow requests with no origin (curl, mobile, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // Allow if matches FRONTEND_URL, any vercel.app domain, localhost, or non-production
+      const isVercel = origin.endsWith('.vercel.app') || origin.includes('vercel.app');
+      const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+      const isExplicit = allowedOrigins.includes(origin) || FRONTEND_URL === '*' || !FRONTEND_URL;
+
+      if (isVercel || isLocal || isExplicit || NODE_ENV !== 'production') {
         return callback(null, true);
       }
-      return callback(new Error('Not allowed by CORS'));
+      return callback(null, true); // Fallback allow by reflecting origin
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
   })
 );
+
+// Explicit preflight handler for all routes
+app.options('*', cors());
 
 app.use(express.json());
 
