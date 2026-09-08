@@ -70,3 +70,4 @@ export const STATUS_META = {
   CANCELLED: { label: 'Cancelled', color: 'bg-gray-100 text-gray-600 border-gray-300' },
   PAYMENT_FAILED: { label: 'Payment Failed', color: 'bg-red-100 text-red-700 border-red-300' }
 };
+

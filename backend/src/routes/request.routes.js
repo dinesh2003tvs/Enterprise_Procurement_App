@@ -59,3 +59,4 @@ router.post('/:id/payment', authorize('PROCUREMENT_ADMIN'), (req, res, next) =>
 router.get('/:id', (req, res, next) => requestController.getRequestDetails(req, res, next));
 
 module.exports = router;
+

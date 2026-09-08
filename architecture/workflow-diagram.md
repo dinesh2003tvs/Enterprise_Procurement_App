@@ -97,3 +97,4 @@ sequenceDiagram
 | `FINANCE_APPROVED` | Assign Vendor | `PROCUREMENT_ADMIN` | `PROCUREMENT_STARTED` | Vendor selected (TechSource in MVP) |
 | `PROCUREMENT_STARTED` | Pay | `PROCUREMENT_ADMIN` | `PAYMENT_PENDING` $\rightarrow$ `COMPLETED` | Valid payment strategy & idempotency key |
 | `REJECTED` | Edit & Resubmit | `EMPLOYEE` | `DRAFT` or `SUBMITTED` | Request can be revived by author |
+

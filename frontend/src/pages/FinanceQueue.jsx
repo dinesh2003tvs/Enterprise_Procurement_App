@@ -235,3 +235,4 @@ export const FinanceQueue = () => {
     </div>
   );
 };
+

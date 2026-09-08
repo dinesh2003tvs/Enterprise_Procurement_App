@@ -27,3 +27,4 @@ const authorize = (...allowedRoles) => {
 module.exports = {
   authorize
 };
+

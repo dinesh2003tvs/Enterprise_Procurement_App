@@ -95,3 +95,4 @@ npm test
    - **Environment Variables**:
      - `VITE_API_BASE_URL`: `https://<your-backend>.onrender.com/api`
 3. Click **Deploy**. Vercel will handle the build and configure SPA routing using `vercel.json`.
+

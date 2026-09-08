@@ -116,3 +116,4 @@ This document outlines the rationale behind every major architectural and patter
   Manual self-hosted VPS (DigitalOcean / AWS EC2) requiring OS updates, reverse proxies, and continuous maintenance.
 - **Impact**: 
   Zero cost, instant deployment on `git push`, high performance, and rapid review turnaround.
+

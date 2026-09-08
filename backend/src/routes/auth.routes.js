@@ -11,3 +11,4 @@ router.post('/login', (req, res, next) => authController.login(req, res, next));
 router.get('/me', authenticate, (req, res, next) => authController.getMe(req, res, next));
 
 module.exports = router;
+
