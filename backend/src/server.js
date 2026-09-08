@@ -54,6 +54,20 @@ if (NODE_ENV !== 'test') {
 }
 
 // --- Mount Routes ---
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    service: 'Enterprise Procurement & Approval API',
+    status: 'ONLINE',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth/login',
+      requests: '/api/requests'
+    }
+  });
+});
+
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/requests', requestRoutes);
